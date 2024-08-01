@@ -1,0 +1,7 @@
+import os,glob
+env=Environment(CXX='mpigxx',CXXFLAGS='-std=c++1z -O2 -finline-functions -ftree-vectorize -ffast-math -march=native -mveclibabi=svml -pthread -pipe -flto -fconcepts',LINK='mpigxx',LINKFLAGS='-pthread',LIBS='gsl flint-arb flint mkl_intel_lp64 mkl_core mkl_sequential imf svml stdc++fs Core Hist Gpad Graf mgl'.split(),ENV=os.environ)
+#-Winline
+#google Options for Debugging Your Program or GCC -fopt-info
+
+env.Program(target='a.out',source=glob.glob('potential/*.cpp')+glob.glob('trajectory/*.cpp')+glob.glob("sampling/*.cpp")+glob.glob("*.cpp"))
+#env.SharedLibrary(target='mathematica',source=glob.glob('potential/*.cpp')+glob.glob('trajectory/*.cpp')+glob.glob("sampling/*.cpp")+glob.glob("*.cpp"))
