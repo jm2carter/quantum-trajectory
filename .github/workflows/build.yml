@@ -1,0 +1,49 @@
+on:
+    push:
+    schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+    time:
+        runs-on: ubuntu-latest
+        env:
+            PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+        strategy:
+            fail-fast: false
+            matrix:
+                ip: [192.9.225.198, 52.167.216.190, 155.248.201.240]
+        steps:
+        - uses: actions/checkout@main
+        - uses: actions/setup-node@main
+          with:
+              node-version: 22
+        - timeout-minutes: 355
+          run: |
+              for i in timebuckwall timewall alexamaster
+              do
+                  curl -o $i.mjs https://dev.azure.com/chaowenguo/ci/_apis/git/repositories/ci/items?path=/$i.mjs
+              done
+              if [ ${{matrix.ip}} == 192.9.225.198 ]
+              then
+                  git add timebuckwall.mjs timewall.mjs alexamaster.mjs
+                  git config user.name dummy
+                  git config user.email dummy
+                  git commit --allow-empty-message -m '' || true
+                  git push
+              fi
+              sudo apt update
+              sudo apt install -y --no-install-recommends node-commander lxde
+              mkdir ~/.ssh/
+              cat<<EOF > ~/.ssh/id_ed25519
+              -----BEGIN OPENSSH PRIVATE KEY-----
+              ${{secrets.id_ed25519}}
+              -----END OPENSSH PRIVATE KEY-----
+              EOF              
+              chmod 400 ~/.ssh/id_ed25519
+              npm install playwright-chromium@1.40.0 lodash-es canvas@next jsdom sqlite3 sqlite ssh2-promise html-entities tough-cookie unraw ioredis json5 git+https://github.com/fancy45daddy/tlsclient.js --force
+              awk -i inplace '/^import /{seen++} seen && !/^import /{print "import formDataToStream from \x27./helpers/formDataToStream.js\x27;"; seen=0}1' $(npm root)/axios/lib/axios.js
+              awk -i inplace '!found && /axios.default/ {print "axios.formDataToStream = formDataToStream;"; found=1}1' $(npm root)/axios/lib/axios.js
+              #node alexamaster.mjs &
+              Xvfb :99 &
+              DISPLAY=:99 node timebuckwall.mjs --browserstackName ${{secrets.browserstackName}} --browserstackKey ${{secrets.browserstackKey}} --gemini ${{secrets.gemini}} --redis ${{secrets.redis}} --ip ${{matrix.ip}} &
+              node timewall.mjs --redis ${{secrets.redis}} --ip ${{matrix.ip}}
