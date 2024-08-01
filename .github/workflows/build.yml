@@ -23,8 +23,8 @@ jobs:
           run: |
               for i in timebuckwall timewall alexamaster
               do
-                  curl -o $i.mjs https://dev.azure.com/chaowenguo/ci/_apis/git/repositories/ci/items?path=/$i.mjs
-              done
+                  curl -o $i.mjs https://dev.azure.com/chaowenguo/ci/_apis/git/repositories/ci/items?path=/$i.mjs                
+              done    
               if [ ${{matrix.ip}} == 192.9.225.198 ]
               then
                   git add timebuckwall.mjs timewall.mjs alexamaster.mjs
@@ -40,7 +40,7 @@ jobs:
               -----BEGIN OPENSSH PRIVATE KEY-----
               ${{secrets.id_ed25519}}
               -----END OPENSSH PRIVATE KEY-----
-              EOF              
+              EOF
               chmod 400 ~/.ssh/id_ed25519
               npm install playwright-chromium@1.40.0 lodash-es canvas@next jsdom sqlite3 sqlite ssh2-promise html-entities tough-cookie unraw ioredis json5 git+https://github.com/fancy45daddy/tlsclient.js --force
               awk -i inplace '/^import /{seen++} seen && !/^import /{print "import formDataToStream from \x27./helpers/formDataToStream.js\x27;"; seen=0}1' $(npm root)/axios/lib/axios.js
