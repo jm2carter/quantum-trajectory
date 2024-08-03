@@ -221,10 +221,10 @@ async function geminiVision(url)
     let result = null
     const response = await axios.get(url)
     while (!(result = await globalThis.fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${commander.program.opts().gemini}`, {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({contents:[{parts:[{text:`1: What is the url next to arrow? Output in JSON object {url:If the url is in wrong format, correct it. If the url is masked, check See results only from}
-                                                                                                                                                                                                                                                                                                             2: Is Visit 4 Pages in the image? Output in JSON object {trading:just boolean not string boolean}
+                                                                                                                                                                                                                                                                                                             2: Is Visit 4 Pages in the image? Output in JSON object {gsc:just boolean not string boolean}
                                                                                                                                                                                                                                                                                                              3: Return the answers from step 1 to 2 in a single JSON object.`}, {inline_data:{mime_type:response.headers.get('Content-Type'), data:globalThis.btoa(response.data)}}]}], generationConfig:{temperature:0, response_mime_type:'application/json'}, safety_settings:[{category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_NONE'}]})}).then(_ => _.json()).then(_ => _.candidates?.at(0)?.content?.parts?.at(0)?.text)));
     result = globalThis.JSON.parse(result) 
-    return result.trading ? 'https://www.adsensecustomsearchads.com/cse_v2/ads?cx=8977236e12a613243&fexp=72519171%2C72519168%2C20606%2C17301431%2C17301434%2C17301435&client=google-coop&q=trading&r=m&sct=ID%3Df87b7137818e7f4c%3AT%3D1715589022%3ART%3D1715589022%3AS%3DALNI_MaTqs7A6yXQeItuDgvkS1eMfIX58A&sc_status=6&hl=en&ivt=0&type=0&oe=UTF-8&ie=UTF-8&client_gdprApplies=0&format=p4&ad=p4&nocache=7541715593568692&num=0&output=uds_ads_only&source=gcsc&v=3&uio=-&rurl=https%3A%2F%2Fforeign.rkraihan.com%2F%23gsc.tab%3D0%26gsc.q%3Dtrading' : result.url 
+    return result.gsc || result.url 
 }
 
 class Template
@@ -293,6 +293,10 @@ class Template
     {
         return null
     }
+    gsc()
+    {
+        return this.#destination.at(1)
+    }
     client(document, post)
     {
         const result = [document, post].map(_ => [!_?.querySelector('script[src^="//c.pubguru.net"]') && _?.querySelector('ins[data-ad-client][data-ad-slot]') && _?.evaluate('//script/@*[contains(local-name(), "src") and starts-with(., "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-")]', _, null, 2, null)?.stringValue?.split(/=|&/)?.at(1), _?.location?.href])
@@ -352,7 +356,7 @@ async function history(template, buckwall)
             if (globalThis.Object.is(response.status, 0) && (response.data.includes('net/http: HTTP/1.x transport connection broken') || response.data.includes('EOF'))) response = await axios.get(destinationLast, {forceHttp1:true})
         }
         else if (globalThis.Object.is(response.status, 0) && response.data.includes('net/http: request canceled (Client.Timeout exceeded while awaiting headers)')) return [null, null]
-        let destination = decodeURIComponent(response.request.responseURL.split(/\?fbclid|#/).at(0))
+        let destination = decodeURIComponent(new globalThis.URL(response.request.responseURL).hash.startsWith('#gsc.tab=0&gsc.q=') ? response.request.responseURL : response.request.responseURL.split(/\?fbclid|#/).at(0))
         if (destination.match(/^https:\/\/[a-z]+\.facebook\.com/))
         {
             destination = globalThis.Object.is(new globalThis.URL(destination).pathname, '/login/') ? new globalThis.URL(destination).searchParams.get('next') : destination
@@ -442,8 +446,16 @@ async function history(template, buckwall)
             }
         }
         else if (globalThis.Object.is(destination.hostname, 'prnt.sc')) todestination.push(document.querySelector('meta[property="og:image"]').content)
-        else if (response.headers.get('Content-Type').startsWith('image')) todestination.push(await geminiVision(destination.href))
-        else if (globalThis.Object.is(destination.hostname, 'open1st.starmediapvtltd.com')) todestination.push('https://www.adsensecustomsearchads.com/cse_v2/ads?cx=8977236e12a613243&fexp=72519171%2C72519168%2C20606%2C17301431%2C17301434%2C17301435&client=google-coop&q=trading&r=m&sct=ID%3Df87b7137818e7f4c%3AT%3D1715589022%3ART%3D1715589022%3AS%3DALNI_MaTqs7A6yXQeItuDgvkS1eMfIX58A&sc_status=6&hl=en&ivt=0&type=0&oe=UTF-8&ie=UTF-8&client_gdprApplies=0&format=p4&ad=p4&nocache=7541715593568692&num=0&output=uds_ads_only&source=gcsc&v=3&uio=-&rurl=https%3A%2F%2Fforeign.rkraihan.com%2F%23gsc.tab%3D0%26gsc.q%3Dtrading')
+        else if (response.headers.get('Content-Type').startsWith('image'))
+        {
+            const result = await geminiVision(destination.href)
+            todestination.push(globalThis.Object.is(typeof result, 'boolean') ? template.gsc() : result)
+        }
+        else if (destination.hash.startsWith('#gsc.tab=0&gsc.q='))
+        {
+            todestination.push('https://www.adsensecustomsearchads.com/cse_v2/ads?cx=8977236e12a613243&client=google-coop&q=trading&format=p4&ad=p4&num=0&output=uds_ads_only&source=gcsc&v=3&uio=-&rurl=https%3A%2F%2Fforeign.rkraihan.com%2F%23gsc.tab%3D0%26gsc.q%3Dtrading') //https://syndicatedsearch.goog/cse_v2/ads?cx=28dc64108fdf6d795&client=google-coop&q=accident%20lawyer&format=p4&ad=p4&num=0&output=uds_ads_only&source=gcsc&v=3&uio=-&rurl=https%3A%2F%2Fsalimspeaking.com%2F%23gsc.tab%3D0%26gsc.q%3Daccident%2520lawyer
+            template.advertisement = false
+        }
         else if (!globalThis.Array.from(document.querySelectorAll('a[href]'), _ => _.href).some(_ => _.startsWith(destination.origin.replace(/^http:/, "https:"))) && !globalThis.Object.is(destination.origin, todestination.at(-1)) && !globalThis.Object.is(destination.hostname, 'www.adsensecustomsearchads.com')) todestination.push(destination.origin)
         else break
     }
