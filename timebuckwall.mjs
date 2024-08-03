@@ -346,6 +346,7 @@ async function history(template, buckwall)
         if (globalThis.Object.is(response.status, 0) && (response.data.includes('net/http: HTTP/1.x transport connection broken') || response.data.includes('EOF'))) response = await axios.get(todestination.at(-1), {forceHttp1:true})
         else if (globalThis.Object.is(response.status, 0) && (response.data.match(/invalid URL scheme:|no such host|failed to create request object:/)))
         {
+            if (response.data.includes('invalid character "{" in host name')) return [null, null]
             const destinationLast = template.destinationExcept(response)
             response = await axios.get(destinationLast)
             if (globalThis.Object.is(response.status, 0) && (response.data.includes('net/http: HTTP/1.x transport connection broken') || response.data.includes('EOF'))) response = await axios.get(destinationLast, {forceHttp1:true})
