@@ -38,13 +38,15 @@ async function gemini(prompt, temperature=0)
         for await (const _ of await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}`, {method:'post', headers:{cookie:hfChat, origin:'https://huggingface.co'}, body:formData}).then(_ => _.body))
         {
             const chunk = new globalThis.TextDecoder().decode(_)
-            if (chunk.includes('finalAnswer')) return lobalThis.JSON.parse(chunk).text
+            if (chunk.includes('finalAnswer')) return globalThis.JSON.parse(chunk).text
         }
     }
-    let result = null
-    while (!(result = await globalThis.fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${commander.program.opts().gemini}`, {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature,response_mime_type:'application/json'}, safety_settings:[{category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_NONE'}]})}).then(_ => _.json()).then(_ => _.candidates?.at(0)?.content?.parts?.at(0)?.text))) await new globalThis.Promise(_ => globalThis.setTimeout(_, 1000 * 5))
-    return result
-    d
+    else
+    {
+        let result = null
+        while (!(result = await globalThis.fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${commander.program.opts().gemini}`, {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature,response_mime_type:'application/json'}, safety_settings:[{category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_NONE'}]})}).then(_ => _.json()).then(_ => _.candidates?.at(0)?.content?.parts?.at(0)?.text))) await new globalThis.Promise(_ => globalThis.setTimeout(_, 1000 * 5))
+        return result
+    }
 }
 
 const buckwall = {
@@ -259,11 +261,11 @@ class Template
                                                                                <destination>What are all the urls in the context in order except google.com and bing.com? urls are padded starts with https. If the url is in  wrong format, correct it. If the url contain *, fill the * based on <context>. The url should never contain *.</destination>
                                                                                <google>Are you asked to search in google?</google>
                                                                                <context>${Instructions}</context>`)))
+            this.#destination = this.destination.answer.map(htmlEntities.decode)
                 console.log(this.periDuration, this.repeat, this.#destination, this.google)
             this.periDuration = this.periDuration.answer
             this.repeat = this.repeat.answer
             this.google = this.google.answer
-            this.#destination = this.destination.answer.map(htmlEntities.decode)
             delete this.destination
             if (!this.periDuration || this.periDuration >= 60) this.periDuration = 60 
             this.ProofInstructions = globalThis.JSON.parse(await gemini(`1: Answer in JSON object {key:{question:summarize the question, why:reason, answer:just boolean not string boolean}} with the question <history>, <url>, <adurl>, <paragraph>, <code> based on <context> with key history, url, adurl, paragraph, code.
