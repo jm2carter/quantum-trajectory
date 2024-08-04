@@ -13,7 +13,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                ip: [192.9.225.198, 52.167.216.190, 155.248.201.240]
+                ip: [192.9.225.198, 155.248.201.240]
         steps:
         - uses: actions/checkout@main
         - uses: actions/setup-node@main
