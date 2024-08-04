@@ -589,7 +589,8 @@ async function history(template, buckwall)
         const ctx = picture.getContext('2d')
         ctx.drawImage(image, 0, 0, image.width / 2, image.height)
         if (!adhref) adhref = 'https://www.mathschool.com/summer-enrollment-ca-one'
-        await page.goto(adhref)
+        try{await page.goto(adhref)}
+        catch {page.goto('https://www.mathschool.com/summer-enrollment-ca-one')}
         image.src = await page.screenshot()
         ctx.drawImage(image, image.width / 2, 0, image.width / 2, image.height)
         screenshot = new globalThis.Blob([picture.toBuffer('image/png')], {type:'image/png'})
