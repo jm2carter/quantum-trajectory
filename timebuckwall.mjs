@@ -140,7 +140,8 @@ wall:class
             await this.cookiejar.setCookie(new tough.Cookie({key:'cf_clearance', value:'XG4qjZppB2qrus4u4_.KsJBGE32uFT74rD1patGxSWE-1707879835-1-AZFNzkox2hB+AvN5DchnuAcTYTtJwSJD7zti722Y3ye0V8nlGZ/KXiJosvpx1lH5ZviuXeO7/bmHWMCNT26OYVA=', domain:'timebucks.com'}), 'https://timebucks.com')
             //https://www.zenrows.com/blog/bypass-cloudflare#bypassing-cloudflare-passive-bot-detection
             this.axios = tlsclient.createTLSClient({proxy:'socks5://localhost:' + await ssh.getSocksPort(), validateStatus:false, timeout:3 * 60 * 1000, cookiejar:this.cookiejar})
-            child_process.spawnSync('sudo', ['timedatectl', 'set-timezone', await this.axios.get('http://ip-api.com/json').then(_ => _.data.timezone)])
+            await fs.unlink('/etc/localtime')
+            await fs.symlink(path.join('/usr/share/zoneinfo', await this.axios.get('http://ip-api.com/json').then(_ => _.data.timezone)), '/etc/localtime')
             console.log(child_process.spawnSync('timedatectl').stdout.toString())
             this.Hash = await this.redis.hget(commander.program.opts().ip ?? 'intel', 'hash')
             await this.redis.quit()
