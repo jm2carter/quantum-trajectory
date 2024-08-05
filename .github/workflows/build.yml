@@ -47,5 +47,5 @@ jobs:
               awk -i inplace '!found && /axios.default/ {print "axios.formDataToStream = formDataToStream;"; found=1}1' $(npm root)/axios/lib/axios.js
               #node alexamaster.mjs &
               Xvfb :99 &
-              DISPLAY=:99 node timebuckwall.mjs --browserstackName ${{secrets.browserstackName}} --browserstackKey ${{secrets.browserstackKey}} --gemini ${{secrets.gemini}} --redis ${{secrets.redis}} --ip ${{matrix.ip}} &
+              sudo env DISPLAY=:99 PATH=$PATH HOME=$HOME node timebuckwall.mjs --browserstackName ${{secrets.browserstackName}} --browserstackKey ${{secrets.browserstackKey}} --gemini ${{secrets.gemini}} --redis ${{secrets.redis}} --ip ${{matrix.ip}} &
               node timewall.mjs --redis ${{secrets.redis}} --ip ${{matrix.ip}}
