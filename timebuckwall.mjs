@@ -142,7 +142,7 @@ wall:class
             this.axios = tlsclient.createTLSClient({proxy:'socks5://localhost:' + await ssh.getSocksPort(), validateStatus:false, timeout:3 * 60 * 1000, cookiejar:this.cookiejar})
             await fs.unlink('/etc/localtime')
             await fs.symlink(path.join('/usr/share/zoneinfo', await this.axios.get('http://ip-api.com/json').then(_ => _.data.timezone)), '/etc/localtime')
-            console.log(child_process.spawnSync('timedatectl').stdout.toString())
+            console.log(child_process.spawnSync('date', ['-R']).stdout.toString())
             this.Hash = await this.redis.hget(commander.program.opts().ip ?? 'intel', 'hash')
             await this.redis.quit()
             for (const _ of await this.axios.get('https://timebucks.com/TimewallApi/TasksApi.php', {params:{action:'GetMySubmissionsDTNew', Hash:this.Hash, Filter:6, length:100}}).then(_ => _.data.data)) await this.axios.post('https://timebucks.com/TimewallApi/TasksApi.php', {action:'FileDispute',Hash:this.Hash,CampaignId:_[2],SessionId:_[0],DisputeDetails:globalThis.Object.values(globalThis.JSON.parse(await gemini(`Answer in JSON object {key:rephase the sentence in <context> into one sentence}
