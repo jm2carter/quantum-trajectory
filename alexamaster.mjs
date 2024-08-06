@@ -11,7 +11,7 @@ const dailyBonus = await axios.get('https://www.alexamaster.com/user/daily_bonus
 console.log(await axios.post('https://www.alexamaster.com/ajax/alexamaster-user', new globalThis.URLSearchParams({id:1}), {params:{[dailyBonus]:'daily_bonus'}, headers:{cookie}}).then(_ => _.data))
 console.log(await axios.post('https://www.alexamaster.com/ajax/alexamaster-user', new globalThis.URLSearchParams({id:3}), {params:{[dailyBonus]:'daily_bonus'}, headers:{cookie}}).then(_ => _.data))*/
 
-https://www.alexamaster.net/cdn-cgi/zaraz/s.js?z=globalThis.btoa(globalThis.encodeURIComponent(globalThis.JSON.stringify({executed:[], t:'Alexa Master Ads', x:globalThis.Math.random(), w:1920, h:1080, j:1920, e:935, l:'https://www.alexamaster.net/?id=535', r:'', k:24, n:'UTF-8', o:420, q:[]})))
+//https://www.alexamaster.net/cdn-cgi/zaraz/s.js?z=globalThis.btoa(globalThis.encodeURIComponent(globalThis.JSON.stringify({executed:[], t:'Alexa Master Ads', x:globalThis.Math.random(), w:1920, h:1080, j:1920, e:935, l:'https://www.alexamaster.net/?id=535', r:'', k:24, n:'UTF-8', o:420, q:[]})))
 //window.screen.width, window.screen.heigh, window.innerWidth, window.innerHeight     
 let token = 'new'
 while (true) {
