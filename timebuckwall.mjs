@@ -17,6 +17,8 @@ import ioredis from 'ioredis'
 import json5 from 'json5'
 import canvas from 'canvas'
 
+globalThis[globalThis.Symbol.for('undici.globalDispatcher.1')] = new globalThis[globalThis.Symbol.for('undici.globalDispatcher.1')].constructor({allowH2:true})
+
 commander.program.requiredOption('--browserstackName <>').requiredOption('--browserstackKey <>').requiredOption('--gemini <>').option('--ip <>').option('--redis <>').option('--llama')
 commander.program.parse()
 const virtualConsole = new jsdom.VirtualConsole()
