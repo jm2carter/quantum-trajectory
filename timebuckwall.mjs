@@ -36,7 +36,9 @@ async function gemini(prompt, temperature=0)
         {
             try
             {
+                    console.log(1)
                 conversation = await globalThis.fetch('https://huggingface.co/chat/conversation', {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({model:'meta-llama/Meta-Llama-3.1-70B-Instruct', parameter:{temperature}, preprompt:'only output json. Do not output anything that is not json. Do not use markdown format'}), signal:globalThis.AbortSignal.timeout(1000 * 5)})
+                    console.log(2)
                 break
             }
             catch (e) {console.log(e)}
