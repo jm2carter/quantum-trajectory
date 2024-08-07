@@ -29,9 +29,7 @@ async function gemini(prompt, temperature=0)
 {
     if (commander.program.opts().llama)
     {
-                    console.log(1)
         const conversation = await globalThis.fetch('https://huggingface.co/chat/conversation', {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({model:'meta-llama/Meta-Llama-3.1-70B-Instruct', parameter:{temperature}, preprompt:'only output json. Do not output anything that is not json. Do not use markdown format'}), signal:globalThis.AbortSignal.timeout(1000 * 5)})
-                    console.log(2)
         const conversationId = await conversation.json().then(_ => _.conversationId)
         const hfChat = conversation.headers.getSetCookie().at(0).split(';').at(0)
         const data = await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}/__data.json?x-sveltekit-invalidated=11`, {headers:{cookie:hfChat}}).then(_ => _.json()).then(_ => _.nodes.at(1).data)
@@ -39,9 +37,10 @@ async function gemini(prompt, temperature=0)
         formData.append('data', globalThis.JSON.stringify({inputs:prompt, id:data.at(data.at(data.at(data.at(0).messages).at(0)).id), is_retry:false, is_continue:false, web_search:false, tools:{}}))
         for await (const _ of await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}`, {method:'post', headers:{cookie:hfChat, origin:'https://huggingface.co'}, body:formData, dispatcher:new globalThis[globalThis.Symbol.for('undici.globalDispatcher.1')].constructor({allowH2:true})}).then(_ => _.body.pipeThrough(new globalThis.TextDecoderStream())))
         {
+                console.log(_)
             if (_.includes('finalAnswer'))
             {
-                console.log(_)
+                console.log(0, _, 1, globalThis.JSON.parse(_))
                 return globalThis.JSON.parse(_).text
             }
         }
@@ -263,7 +262,7 @@ class Template
                                                                                5: Return the answers from step 1 to 4 in a single JSON object. Not JSON array.
                                                                                <periDuration>How long to visit just one article or blog or page or post or topic, not total time? If the question can not be answered, answer should be null</periDuration>
                                                                                <repeat>How many articles or blogs or pages or posts or topics should be visited or opened before click on advertisement? If there are multiple answers, return the maximum number. If you can not answer the question, return 1</repeat>
-                                                                               <destination>What are all the urls in the context in order except google.com and bing.com? urls are padded starts with https. If the url is in  wrong format, correct it. If the url contain *, fill the * based on <context>. The url should never contain *.</destination>
+                                                                               <destination>What are all the urls in the context in order except google.com and bing.com? urls are padded starts with https. If the url is in wrong format, correct it. If the url contain *, fill the * based on <context>. The url should never contain *. Do not return duplicate urls.</destination>
                                                                                <google>Are you asked to search in google?</google>
                                                                                <context>${Instructions}</context>`)))
             this.#destination = this.destination.answer.map(htmlEntities.decode)
