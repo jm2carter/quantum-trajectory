@@ -34,22 +34,27 @@ async function gemini(prompt, temperature=0)
     {
         while (!result)
         {
+                console.log(result)
             const conversation = await globalThis.fetch('https://huggingface.co/chat/conversation', {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({model:'meta-llama/Meta-Llama-3.1-70B-Instruct', parameter:{temperature}, preprompt:'only output json. Do not output anything that is not json. Do not use markdown format'})})
+                console.log(conversation)
             const conversationId = await conversation.json().then(_ => _.conversationId)
+                console.log(conversationId)
             const hfChat = conversation.headers.getSetCookie().at(0).split(';').at(0)
+                console.log(hfChat)
             const data = await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}/__data.json?x-sveltekit-invalidated=11`, {headers:{cookie:hfChat}}).then(_ => _.json()).then(_ => _.nodes.at(1).data)
             const formData = new globalThis.FormData()
             formData.append('data', globalThis.JSON.stringify({inputs:prompt, id:data.at(data.at(data.at(data.at(0).messages).at(0)).id), is_retry:false, is_continue:false, web_search:false, tools:{}}))
-            for await (const _ of await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}`, {method:'post', headers:{cookie:hfChat, origin:'https://huggingface.co'}, body:formData}).then(_ => _.body))
+            for await (const _ of await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}`, {method:'post', headers:{cookie:hfChat, origin:'https://huggingface.co'}, body:formData}).then(_ => _.body.pipeThrough(new globalThis.TextDecoderStream())))
             {
-                const chunk = new globalThis.TextDecoder().decode(_)
-                if (chunk.includes('finalAnswer'))
+                    console.log(_)
+                if (_.includes('finalAnswer'))
                 {
-                    result = globalThis.JSON.parse(chunk).text
+                    result = globalThis.JSON.parse(_).text
                     try{globalThis.JSON.parse(result)}
                     catch {result = null}
                 }
             }
+            await new globalThis.Promise(_ => globalThis.setTimeout(_, 1000 * 5))
         }
     }
     else
