@@ -17,8 +17,6 @@ import ioredis from 'ioredis'
 import json5 from 'json5'
 import canvas from 'canvas'
 
-globalThis[globalThis.Symbol.for('undici.globalDispatcher.1')] = new globalThis[globalThis.Symbol.for('undici.globalDispatcher.1')].constructor({allowH2:true})
-
 commander.program.requiredOption('--browserstackName <>').requiredOption('--browserstackKey <>').requiredOption('--gemini <>').option('--ip <>').option('--redis <>').option('--llama')
 commander.program.parse()
 const virtualConsole = new jsdom.VirtualConsole()
@@ -31,24 +29,15 @@ async function gemini(prompt, temperature=0)
 {
     if (commander.program.opts().llama)
     {
-        let conversation = null
-        while (true)
-        {
-            try
-            {
                     console.log(1)
-                conversation = await globalThis.fetch('https://huggingface.co/chat/conversation', {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({model:'meta-llama/Meta-Llama-3.1-70B-Instruct', parameter:{temperature}, preprompt:'only output json. Do not output anything that is not json. Do not use markdown format'}), signal:globalThis.AbortSignal.timeout(1000 * 5)})
+        const conversation = await globalThis.fetch('https://huggingface.co/chat/conversation', {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({model:'meta-llama/Meta-Llama-3.1-70B-Instruct', parameter:{temperature}, preprompt:'only output json. Do not output anything that is not json. Do not use markdown format'}), signal:globalThis.AbortSignal.timeout(1000 * 5)})
                     console.log(2)
-                break
-            }
-            catch (e) {console.log(e)}
-        }
         const conversationId = await conversation.json().then(_ => _.conversationId)
         const hfChat = conversation.headers.getSetCookie().at(0).split(';').at(0)
         const data = await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}/__data.json?x-sveltekit-invalidated=11`, {headers:{cookie:hfChat}}).then(_ => _.json()).then(_ => _.nodes.at(1).data)
         const formData = new globalThis.FormData()
         formData.append('data', globalThis.JSON.stringify({inputs:prompt, id:data.at(data.at(data.at(data.at(0).messages).at(0)).id), is_retry:false, is_continue:false, web_search:false, tools:{}}))
-        for await (const _ of await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}`, {method:'post', headers:{cookie:hfChat, origin:'https://huggingface.co'}, body:formData}).then(_ => _.body.pipeThrough(new globalThis.TextDecoderStream())))
+        for await (const _ of await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}`, {method:'post', headers:{cookie:hfChat, origin:'https://huggingface.co'}, body:formData, dispatcher:new globalThis[globalThis.Symbol.for('undici.globalDispatcher.1')].constructor({allowH2:true})}).then(_ => _.body.pipeThrough(new globalThis.TextDecoderStream())))
         {
             if (_.includes('finalAnswer'))
             {
