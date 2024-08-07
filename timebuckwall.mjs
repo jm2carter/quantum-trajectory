@@ -29,37 +29,38 @@ if (buildId)
 
 async function gemini(prompt, temperature=0)
 {
-    let result = null
     if (commander.program.opts().llama)
     {
-        while (!result)
+        let conversation = null
+        while (true)
         {
-                console.log(result)
-            const conversation = await globalThis.fetch('https://huggingface.co/chat/conversation', {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({model:'meta-llama/Meta-Llama-3.1-70B-Instruct', parameter:{temperature}, preprompt:'only output json. Do not output anything that is not json. Do not use markdown format'})})
-                console.log(conversation)
-            const conversationId = await conversation.json().then(_ => _.conversationId)
-                console.log(conversationId)
-            const hfChat = conversation.headers.getSetCookie().at(0).split(';').at(0)
-                console.log(hfChat)
-            const data = await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}/__data.json?x-sveltekit-invalidated=11`, {headers:{cookie:hfChat}}).then(_ => _.json()).then(_ => _.nodes.at(1).data)
-            const formData = new globalThis.FormData()
-            formData.append('data', globalThis.JSON.stringify({inputs:prompt, id:data.at(data.at(data.at(data.at(0).messages).at(0)).id), is_retry:false, is_continue:false, web_search:false, tools:{}}))
-            for await (const _ of await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}`, {method:'post', headers:{cookie:hfChat, origin:'https://huggingface.co'}, body:formData}).then(_ => _.body.pipeThrough(new globalThis.TextDecoderStream())))
+            try
             {
-                    console.log(_)
-                if (_.includes('finalAnswer'))
-                {
-                    result = globalThis.JSON.parse(_).text
-                    try{globalThis.JSON.parse(result)}
-                    catch {result = null}
-                }
+                conversation = await globalThis.fetch('https://huggingface.co/chat/conversation', {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({model:'meta-llama/Meta-Llama-3.1-70B-Instruct', parameter:{temperature}, preprompt:'only output json. Do not output anything that is not json. Do not use markdown format'}), signal:globalThis.AbortSignal.timeout(1000 * 5)})
+                break
             }
-            await new globalThis.Promise(_ => globalThis.setTimeout(_, 1000 * 5))
+            catch (e) {console.log(e)}
+        }
+        const conversationId = await conversation.json().then(_ => _.conversationId)
+        const hfChat = conversation.headers.getSetCookie().at(0).split(';').at(0)
+        const data = await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}/__data.json?x-sveltekit-invalidated=11`, {headers:{cookie:hfChat}}).then(_ => _.json()).then(_ => _.nodes.at(1).data)
+        const formData = new globalThis.FormData()
+        formData.append('data', globalThis.JSON.stringify({inputs:prompt, id:data.at(data.at(data.at(data.at(0).messages).at(0)).id), is_retry:false, is_continue:false, web_search:false, tools:{}}))
+        for await (const _ of await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}`, {method:'post', headers:{cookie:hfChat, origin:'https://huggingface.co'}, body:formData}).then(_ => _.body.pipeThrough(new globalThis.TextDecoderStream())))
+        {
+            if (_.includes('finalAnswer'))
+            {
+                console.log(_)
+                return globalThis.JSON.parse(_).text
+            }
         }
     }
     else
+    {
+        let result = null
         while (!(result = await globalThis.fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${commander.program.opts().gemini}`, {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature,response_mime_type:'application/json'}, safety_settings:[{category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_NONE'}]})}).then(_ => _.json()).then(_ => _.candidates?.at(0)?.content?.parts?.at(0)?.text))) await new globalThis.Promise(_ => globalThis.setTimeout(_, 1000 * 5))
-    return result
+        return result
+    }
 }
 
 const buckwall = {
