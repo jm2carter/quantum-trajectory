@@ -48,6 +48,7 @@ async function gemini(prompt, temperature=0)
                 }
                 //Model is overloaded
             }
+            await new globalThis.Promise(_ => globalThis.setTimeout(_, 1000 * 5))
         }
     }
     else
