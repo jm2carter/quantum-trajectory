@@ -31,7 +31,7 @@ async function gemini(prompt, temperature=0)
     {
         while (true)
         {
-            const conversation = await globalThis.fetch('https://huggingface.co/chat/conversation', {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({model:'meta-llama/Meta-Llama-3.1-70B-Instruct', parameter:{temperature}, preprompt:'only output json. Do not output anything that is not json. Do not use markdown format'}), signal:globalThis.AbortSignal.timeout(1000 * 5)})
+            const conversation = await globalThis.fetch('https://huggingface.co/chat/conversation', {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({model:'meta-llama/Meta-Llama-3.1-70B-Instruct', parameter:{temperature}, preprompt:'only output json. Do not output anything that is not json. Do not use markdown format'})})
             const conversationId = await conversation.json().then(_ => _.conversationId)
             const hfChat = conversation.headers.getSetCookie().at(0).split(';').at(0)
             const data = await globalThis.fetch(`https://huggingface.co/chat/conversation/${conversationId}/__data.json?x-sveltekit-invalidated=11`, {headers:{cookie:hfChat}}).then(_ => _.json()).then(_ => _.nodes.at(1).data)
