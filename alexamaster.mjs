@@ -27,3 +27,30 @@ while (true)
     await new globalThis.Promise(_ => globalThis.setTimeout(_, 1000 * (time + up_time + down_time)))
     console.log(await axios.post('https://www.alexamaster.net/ajax/close.php', {long_query:token, master_id:id, local_time:globalThis.Date.now(), end_url:'https://www.alexamaster.com/'}, {params:{id}}).then(_ => _.data.reply.master_points))
 }
+
+/*curl 'https://www.alexamaster.net/cdn-cgi/zaraz/t' \
+  -H 'sec-ch-ua: "Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127"' \
+  -H 'Content-Type: application/json' \
+  -H 'Referer;' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36' \
+  -H 'sec-ch-ua-platform: "Linux"' \
+  --data-raw '{"name":"visibilityChange","data":{"__zcl_track":true,"__zcl_visibilityChange":true,"__zarazMCListeners":{"google-analytics_v4_nkzb":["visibilityChange"]},"visibilityChange":[{"state":"hidden","timestamp":1723103608168}],"__zarazClientEvent":true},"zarazData":{"executed":["Pageview"],"t":"Alexa Master Ads","x":0.9112041592581552,"w":1920,"h":1080,"j":901,"e":1920,"l":"https://www.alexamaster.net/?id=535","r":"","k":24,"n":"UTF-8","o":420,"_let":1723103596979}}'
+
+  curl 'https://www.alexamaster.net/cdn-cgi/zaraz/t' \
+  -H 'sec-ch-ua: "Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127"' \
+  -H 'Content-Type: application/json' \
+  -H 'Referer;' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36' \
+  -H 'sec-ch-ua-platform: "Linux"' \
+  --data-raw '{"name":"visibilityChange","data":{"__zcl_track":true,"__zcl_visibilityChange":true,"__zarazMCListeners":{"google-analytics_v4_nkzb":["visibilityChange"]},"visibilityChange":[{"state":"visible","timestamp":1723104292254}],"__zarazClientEvent":true},"zarazData":{"executed":["Pageview"],"t":"Alexa Master Ads","x":0.9112041592581552,"w":1920,"h":1080,"j":901,"e":1920,"l":"https://www.alexamaster.net/?id=535","r":"","k":24,"n":"UTF-8","o":420,"_let":1723104290246}}'
+
+  curl 'https://www.alexamaster.net/cdn-cgi/zaraz/t' \
+  -H 'sec-ch-ua: "Not)A;Brand";v="99", "Google Chrome";v="127", "Chromium";v="127"' \
+  -H 'Content-Type: application/json' \
+  -H 'Referer;' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36' \
+  -H 'sec-ch-ua-platform: "Linux"' \
+  --data-raw '{"name":"visibilityChange","data":{"__zcl_track":true,"__zcl_visibilityChange":true,"__zarazMCListeners":{"google-analytics_v4_nkzb":["visibilityChange"]},"visibilityChange":[{"state":"visible","timestamp":1723104409824}],"__zarazClientEvent":true},"zarazData":{"executed":["Pageview"],"t":"Alexa Master Ads","x":0.9112041592581552,"w":1920,"h":1080,"j":901,"e":1920,"l":"https://www.alexamaster.net/?id=535","r":"","k":24,"n":"UTF-8","o":420,"_let":1723104391047}}'*/
