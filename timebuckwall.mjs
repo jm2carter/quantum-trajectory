@@ -57,6 +57,23 @@ async function gemini(prompt, temperature=0)
         while (!(result = await globalThis.fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${commander.program.opts().gemini}`, {method:'post', headers:{'content-type':'application/json'}, body:globalThis.JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature,response_mime_type:'application/json'}, safety_settings:[{category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_NONE'},{category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_NONE'}]})}).then(_ => _.json()).then(_ => _.candidates?.at(0)?.content?.parts?.at(0)?.text))) await new globalThis.Promise(_ => globalThis.setTimeout(_, 1000 * 5))
         return result
     }
+/*const dispatcher = new class extends globalThis[globalThis.Symbol.for('undici.globalDispatcher.1')].constructor{dispatch(opts, handler){delete opts.headers['sec-fetch-mode'];return super.dispatch(opts, handler)}} 
+const response = await globalThis.fetch('https://www.meta.ai', {dispatcher})
+const document = new jsdom.JSDOM(await response.text(), {url:response.url}).window.document 
+const script = document.evaluate('//script[contains(text(), "abra_csrf")]', document, null, 2, null).stringValue
+const abra_csrf = script.match(/(?<="abra_csrf":{"value":")[-\w]+(?=",")/g).at(0)
+const _js_datr = script.match(/(?<="_js_datr":{"value":")[-\w]+(?=",")/g).at(0)
+const cookie = `abra_csrf=${abra_csrf};_js_datr=${_js_datr}` 
+const lsd = document.evaluate('//script[contains(text(), "LSD")]', document, null, 2, null).stringValue.match(/(?<="LSD",\[\],{"token":")[-\w]+(?="},)/g).at(0)
+const access_token = await globalThis.fetch('https://www.meta.ai/api/graphql', {method:'post', headers:{cookie}, body:new globalThis.URLSearchParams({lsd, variables:globalThis.JSON.stringify({dob:'1999-01-01'}), doc_id:8010633055670139}), dispatcher}).then(_ => _.json()).then(_ => _.data.xab_abra_accept_terms_of_service.new_temp_user_auth.access_token)
+const formData = new globalThis.FormData()
+formData.append('access_token', access_token)
+formData.append('variables', globalThis.JSON.stringify({message:{sensitive_string_value:'what is ai'}, externalConversationId:globalThis.crypto.randomUUID(), offlineThreadingId:"7227565300174165657"}))
+formData.append('doc_id', 26723151463942800)
+for await (const _ of await globalThis.fetch('https://graph.meta.ai/graphql?locale=user', {method:'post', headers:{cookie}, body:formData}).then(_ => _.body.pipeThrough(new globalThis.TextDecoderStream())))
+{
+    if (_.includes('OVERALL_DONE')) console.log(_.match(/(?<="snippet":").+(?=","composed_text":)/g).at(0))
+}*/
 }
 
 const buckwall = {
